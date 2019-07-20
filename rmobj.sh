@@ -1,11 +1,7 @@
 #!/bin/bash
-inf=500
+inf=1000
 a=1
 b=".git"
-strindex() { 
-  x="${1%%$2*}"
-  [[ $x = $1 ]] && return -1 || return ${#x}
-}
 Delete_object(){
 	if [ "$1" == "$b" ]
 	then
