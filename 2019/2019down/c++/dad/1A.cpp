@@ -1,3 +1,4 @@
+//http://codeforces.com/contest/1/problem/A
 #include <cstdio>
 using namespace std;
 int main()

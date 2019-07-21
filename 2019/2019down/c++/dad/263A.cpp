@@ -1,3 +1,4 @@
+//http://codeforces.com/contest/263/problem/A
 #include <cstdio>
 using namespace std;
 int abs(int x)
