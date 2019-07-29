@@ -1,8 +1,3 @@
-/*
-ID: zjd32151
-TASK: prefix
-LANG: C++
-*/
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
@@ -25,12 +20,17 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 205;
-string s[maxn];
+const int maxn = 100005;
+struct treap{
+	struct node_for_treap{
+		int l,r,val,dat,cnt,siz;
+	};
+	int root,sz;
+	node_for_treap s[maxn];
+	
+};
 int main(int argc, char const *argv[])
 {
-	// freopen("prefix.in","r",stdin);
-	// freopen("prefix.out","w",stdout);
-
+	
 	return 0;
 }
