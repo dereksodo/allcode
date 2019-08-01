@@ -88,7 +88,7 @@ int countdepth_k(int index,int k)
 }
 void preorder(int index)
 {
-	printf("%d:%d\n",index,node[index].value);
+	printf("(%d,%d) ",index,node[index].value);
 	if(node[index].left != -1)
 	{
 		preorder(node[index].left);
@@ -104,7 +104,7 @@ void inorder(int index)
 	{
 		inorder(node[index].left);
 	}
-	printf("%d:%d\n",index,node[index].value);
+	printf("(%d,%d) ",index,node[index].value);
 	if(node[index].right != -1)
 	{
 		inorder(node[index].right);
@@ -120,7 +120,7 @@ void postorder(int index)
 	{
 		postorder(node[index].right);
 	}
-	printf("%d:%d\n",index,node[index].value);
+	printf("(%d,%d) ",index,node[index].value);
 }
 void preorder_advance(int index)
 {
@@ -132,13 +132,14 @@ void preorder_advance(int index)
 	{
 		while(index != -1)
 		{
-			printf("%d:%d\n",index,node[index].value);
+			printf("(%d,%d) ",index,node[index].value);
 			s.push(index);
 			index = node[index].left;
 		}
 		index = node[s.top()].right;
 		s.pop();
 	}
+	printf("\n");
 }
 void inorder_advance(int index)
 {
@@ -153,10 +154,11 @@ void inorder_advance(int index)
 			index = node[index].left;
 		}
 		int cur = s.top();
-		printf("%d:%d\n",cur,node[cur].value);
+		printf("(%d,%d) ",cur,node[cur].value);
 		index = node[cur].right;
 		s.pop();
 	}
+	printf("\n");
 }
 void postorder_advance(int index)
 {
@@ -168,7 +170,7 @@ void postorder_advance(int index)
 		if((node[index].right == -1 && node[index].left == -1)
 		 || (flag && (flag == node[index].left || flag == node[index].right)))
 		{
-			printf("%d:%d\n",index,node[index].value);
+			printf("(%d,%d) ",index,node[index].value);
 			flag = index;
 			s.pop();
 		}
@@ -188,6 +190,7 @@ void postorder_advance(int index)
 			index = s.top();
 		}
 	}
+	printf("\n");
 }
 void mirror(int index)
 {
@@ -328,43 +331,6 @@ void Huffman(vector< pair<string,int> > vp)
 		}
 	}
 }
-/*
-6
-a 9
-b 12
-c 6 
-d 3
-e 5
-f 15
-
-
-
-7
-1 2 3 1
-2 4 -1 1
-3 5 -1 1
-4 -1 6 1
-5 -1 -1 1
-6 -1 7 1
-7 -1 -1 1
-
-7
-1 2 3 1
-2 4 5 1
-3 6 7 1
-4 -1 -1 1
-5 -1 -1 1
-6 -1 -1 1
-7 -1 -1 1
-
-3 
-68 3 7 1
-3 -1 -1 1
-7 -1 -1 1
-*/
-
-
-
 
 //segment tree
 namespace segment_tree{
@@ -434,7 +400,7 @@ namespace segment_tree{
 			}
 			pushdown(index,r - l + 1);
 			int mid = (l + r) >> 1;
-			if(index <= mid)
+			if(target <= mid)
 			{
 				update1(index << 1,l,mid,v,target);
 			}
@@ -474,7 +440,7 @@ namespace segment_tree{
 			}
 			pushdown(index,r - l + 1);
 			int mid = (l + r) >> 1;
-			if(index <= mid)
+			if(target <= mid)
 			{
 				update2(index << 1,l,mid,v,target);
 			}
@@ -1207,6 +1173,7 @@ int main(int argc, char const *argv[])
 			int rt;
 			cin>>rt;
 			preorder(rt);
+			printf("\n");
 		}
 		else if(c == 7)
 		{
@@ -1214,6 +1181,7 @@ int main(int argc, char const *argv[])
 			int rt;
 			cin>>rt;
 			postorder(rt);
+			printf("\n");
 		}
 		else if(c == 8)
 		{
@@ -1221,6 +1189,7 @@ int main(int argc, char const *argv[])
 			int rt;
 			cin>>rt;
 			inorder(rt);
+			printf("\n");
 		}
 		else if(c == 9)
 		{

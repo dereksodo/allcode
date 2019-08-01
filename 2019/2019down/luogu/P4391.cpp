@@ -20,17 +20,41 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 100005;
-struct treap{
-	struct node_for_treap{
-		int l,r,val,dat,cnt,siz;
-	};
-	int root,sz;
-	node_for_treap s[maxn];
-	
+const int maxn = 1000005;
+namespace kmp{
+	char a[maxn];
+	int nxt[maxn],n;
+	void buildnxt()
+	{
+		int j = 0;
+		for(int i = 2;i <= n; ++i)
+		{
+			while(j && a[i] != a[j + 1])
+			{
+				j = nxt[j];
+			}
+			if(a[j + 1] == a[i])
+			{
+				++j;
+			}
+			nxt[i] = j;
+		}
+	}
+	void geta()
+	{
+		cin>>n;
+		cin>>a + 1;
+	}
+	int main()
+	{
+		geta();
+		buildnxt();
+		printf("%d\n",n - nxt[n]);
+		return 0;
+	}
 };
 int main(int argc, char const *argv[])
 {
-	
+	kmp::main();
 	return 0;
 }
