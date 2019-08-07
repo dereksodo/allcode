@@ -1,10 +1,11 @@
 #!/bin/bash
 folder=$1
-cd ~/Desktop/2019/2019down/c++
+folder="contest"${folder}
+cd /Users/tianhaozhang/Desktop/allcode/2019/2019down
 # rm -r ${folder}
-if [ -d ${folder} ];then
-echo "Can't"
-else
+# if [ -d ${folder} ];then
+# echo "Can't"
+# else
 mkdir ${folder}
 cd ${folder}
 touch A.cpp
@@ -19,4 +20,4 @@ g++-7 A.cpp -o A
 g++-7 B.cpp -o B
 g++-7 C.cpp -o C
 g++-7 D.cpp -o D
-fi
+# fi
