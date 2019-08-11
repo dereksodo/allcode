@@ -12,6 +12,7 @@
 #include <stack>
 #include <cassert>
 #include <climits>
+#include <numeric>
 using namespace std;
 typedef long long ll;
 #define DEBUG

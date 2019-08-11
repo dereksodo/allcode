@@ -23,7 +23,7 @@ typedef long long ll;
 const int maxn = 100005;
 struct splay_2{
 	struct node_for_splay_2{
-	int ch[2],fa,siz,cnt,key;
+		int ch[2],fa,siz,cnt,key;
 	};
 	int root,sz;
 	node_for_splay_2 s[maxn];

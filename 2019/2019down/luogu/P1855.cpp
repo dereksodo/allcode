@@ -20,32 +20,27 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-int a[105][105];
-int dp[105][105];
+int dp[205][205];
+int money[205];
+int t[205];
 int main(int argc, char const *argv[])
 {
-	int n,m;
-	cin>>n>>m;
+	int M,T,n;
+	cin>>n>>M>>T;
 	for(int i = 1;i <= n; ++i)
 	{
-		for(int j = 1;j <= m; ++j)
-		{
-			scanf("%d",&a[i][j]);
-		}
+		cin>>money[i]>>t[i];
 	}
-	int ans = 1;
 	for(int i = 1;i <= n; ++i)
 	{
-		for(int j = 1;j <= m; ++j)
+		for(int j = M;j >= money[i]; --j)
 		{
-			if(a[i][j] == 0)
+			for(int k = T;k >= t[i]; --k)
 			{
-				continue;
+				dp[j][k] = max(dp[j][k],dp[j - money[i]][k - t[i]] + 1);
 			}
-			dp[i][j] = min(min(dp[i][j - 1],dp[i - 1][j]),dp[i - 1][j - 1]) + 1;
-			ans = max(ans,dp[i][j]);
 		}
 	}
-	printf("%d\n",ans);
+	printf("%d\n",dp[M][T]);
 	return 0;
 }
