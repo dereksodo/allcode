@@ -132,6 +132,6 @@ namespace manacher{
 };
 int main(int argc, char const *argv[])
 {
-	manacher::main();
+	kmp::main();
 	return 0;
 }
