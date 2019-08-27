@@ -24,37 +24,86 @@ typedef long long ll;
 const int maxn = 30;
 vector<int> v[maxn];
 char pa[maxn],pb[maxn];
-int color[maxn];
-int f(int b)
+int n;
+int wa,ca,wb,cb,a,b;
+void f()
 {
-	for(int i = 0;i < v[color[b]].size(); ++i)
+	for(int i = 0;i < n; ++i)
 	{
-		if(v[color[b]][i] == b)
+		for(int j = 0;j < v[i].size(); ++j)
 		{
-			return i;
+			if(v[i][j] == a)
+			{
+				wa = i,ca = j;
+			}
+			if(v[i][j] == b)
+			{
+				wb = i,cb = j;
+			}
 		}
 	}
 }
+void moon()
+{
+	for(int i = ca + 1;i < v[wa].size(); ++i)
+	{
+		v[v[wa][i]].push_back(v[wa][i]);
+	}
+	for(int i = cb + 1;i < v[wb].size(); ++i)
+	{
+		v[v[wb][i]].push_back(v[wb][i]);
+	}
+	v[wa].resize(ca);
+	v[wb].resize(cb + 1);
+	v[wb].push_back(a);
+}
+void moov()
+{
+	for(int i = ca + 1;i < v[wa].size(); ++i)
+	{
+		v[v[wa][i]].push_back(v[wa][i]);
+	}
+	v[wa].resize(ca);
+	v[wb].push_back(a);
+}
+void pion()
+{
+	for(int i = cb + 1;i < v[wb].size(); ++i)
+	{
+		v[v[wb][i]].push_back(v[wb][i]);
+	}
+	v[wb].resize(cb + 1);
+	for(int i = ca;i < v[wa].size(); ++i)
+	{
+		v[wb].push_back(v[wa][i]);
+	}
+	v[wa].resize(ca);
+}
+void piov()
+{
+	for(int i = ca;i < v[wa].size(); ++i)
+	{
+		v[wb].push_back(v[wa][i]);
+	}
+	v[wa].resize(ca);
+}
 int main(int argc, char const *argv[])
 {
-	int n;
-	cin>>n;
+	scanf("%d",&n);
 	for(int i = 0;i < n; ++i)
 	{
-		v[i].clear();
 		v[i].push_back(i);
-		color[i] = i;
 	}
 	while(1)
 	{
-		int a,b;
-		scanf(" %s",pa);
+		scanf("%s",pa);
 		if(pa[0] == 'q')
 		{
 			break;
 		}
-		scanf(" %d %s %d",&a,pb,&b);
-		if(a == b)
+		scanf("%d%s%d",&a,pb,&b);
+		f();
+		if(wa == wb)
 		{
 			continue;
 		}
@@ -62,102 +111,29 @@ int main(int argc, char const *argv[])
 		{
 			if(pb[1] == 'n')
 			{
-				int j = f(a);
-				int j2 = f(b);
-				for(int i = j + 1;i < v[color[a]].size(); ++i)
-				{
-					int u = v[color[a]][i];
-					v[u].push_back(u);
-					color[u] = u;
-				}
-				int sz = v[color[a]].size() - (j + 1);
-				while(sz--)
-				{
-					v[color[a]].pop_back();
-				}
-				for(int i = j2 + 1;i < v[color[b]].size(); ++i)
-				{
-					int u = v[color[b]][i];
-					v[color[b]].pop_back();
-					v[u].push_back(u);
-					color[u] = u;
-				}
-				sz = v[color[b]].size() - (j2 + 1);
-				while(sz--)
-				{
-					v[color[b]].pop_back();
-				}
-				v[color[a]].pop_back();
-				color[a] = b;
-				v[b].push_back(a);
+				moon();
 			}
 			else
 			{
-				int j = f(a);
-				for(int i = j + 1;i < v[color[a]].size(); ++i)
-				{
-					int u = v[color[a]][i];
-					v[u].push_back(u);
-					v[color[a]].pop_back();
-					color[u] = u;
-				}
-				v[color[a]].pop_back();
-				color[a] = b;
-				v[b].push_back(a);
+				moov();	
 			}
 		}
 		else
 		{
 			if(pb[1] == 'n')
 			{
-				int j = f(a);
-				int j2 = f(b);
-				for(int i = j2 + 1;i < v[color[b]].size(); ++i)
-				{
-					int u = v[color[b]][i];
-					v[u].push_back(u);
-					v[color[b]].pop_back();
-					color[u] = u;
-				}
-				int sz = v[color[a]].size();
-				for(int i = j;i < sz; ++i)
-				{
-					int u = v[color[a]][i];
-					color[u] = b;
-					v[color[b]].pop_back();
-					v[b].push_back(u);
-				}
+				pion();
 			}
 			else
 			{
-				int j = f(a);
-				int sz = v[color[a]].size();
-				for(int i = j + 1;i < sz; ++i)
-				{
-					int u = v[color[a]][i];
-					color[u] = b;
-					v[color[a]].pop_back();
-					v[b].push_back(u);
-				}
+				piov();
 			}
-		}
-		printf("done\n");
-		for(int i = 0;i < n; ++i)
-		{
-			printf("%d:",i);
-			int sz = v[i].size();
-			for(int j = 0;j < sz; ++j)
-			{
-				printf(" %d",v[i][j]);
-			}
-			printf("\n");
 		}
 	}
 	for(int i = 0;i < n; ++i)
 	{
 		printf("%d:",i);
-		int sz = v[i].size();
-		for(int j = 0;j < sz; ++j)
+		for(int j = 0;j < v[i].size(); ++j)
 		{
 			printf(" %d",v[i][j]);
 		}

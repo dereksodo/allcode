@@ -13,6 +13,7 @@
 #include <cassert>
 #include <climits>
 #include <numeric>
+#include <sstream>
 using namespace std;
 typedef long long ll;
 #define DEBUG
