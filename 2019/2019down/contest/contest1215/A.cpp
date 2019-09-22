@@ -22,40 +22,36 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 100005;
-int a[maxn];
 int main(int argc, char const *argv[])
 {
-	int n;
-	cin>>n;
-	for(int i = 1;i <= n; ++i)
+	int a1,a2,k1,k2,n;
+	cin>>a1>>a2>>k1>>k2>>n;
+	int n2 = n;
+	int ans1 = 0,ans2 = 0;
+	if(k1 > k2)
 	{
-		scanf("%d",&a[i]);
+		swap(k1,k2);
+		swap(a1,a2);
 	}
-	sort(a + 1,a + n + 1);
-	int l = 0,r = n / 2;
-	int ans = 0;
-	while(l <= r)
+	
+	n -= ((k1 - 1) * a1 + (k2 - 1) * a2);
+	if(n > 0)
 	{
-		int mid = (l + r) >> 1;
-		bool flag = 1;
-		for(int i = 1;i <= mid; ++i)
-		{
-			if((a[i] << 1) > a[n - mid + i])
-			{
-				flag = 0;
-				break;
-			}
-		}
-		if(flag)
-		{
-			ans = mid,l = mid + 1;
-		}
-		else
-		{
-			r = mid - 1;
-		}
+		ans1 = n;
 	}
-	cout<<ans<<endl;
+
+	int minnow = n2 / k1;
+	minnow = min(minnow,a1);
+	ans2 += minnow;
+	n2 -= minnow * k1;
+	// printf("minnow = %d\n",minnow);
+	if(n2 > 0)
+	{
+		minnow = n2 / k2;
+		minnow = min(minnow,a2);
+		ans2 += minnow;
+	}
+
+	cout<<ans1<<" "<<ans2<<endl;
 	return 0;
 }

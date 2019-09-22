@@ -22,40 +22,26 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 100005;
-int a[maxn];
 int main(int argc, char const *argv[])
 {
-	int n;
-	cin>>n;
-	for(int i = 1;i <= n; ++i)
+	ll n,l,w,x,y,a;
+	cin>>n>>l>>w>>x>>y>>a;
+	ll maxp = w / a;
+	ll ans = -1;
+	for(ll i = 1;i <= maxp; ++i)
 	{
-		scanf("%d",&a[i]);
-	}
-	sort(a + 1,a + n + 1);
-	int l = 0,r = n / 2;
-	int ans = 0;
-	while(l <= r)
-	{
-		int mid = (l + r) >> 1;
-		bool flag = 1;
-		for(int i = 1;i <= mid; ++i)
+		ll now = ((w - a * i) / y) * (l / x);
+		if(now >= n)
 		{
-			if((a[i] << 1) > a[n - mid + i])
-			{
-				flag = 0;
-				break;
-			}
-		}
-		if(flag)
-		{
-			ans = mid,l = mid + 1;
+			ll maxi = (w - i * a) / y;
+			maxi = min(maxi,2 * i);
+			ans = max(ans,maxi * (l / x));
 		}
 		else
 		{
-			r = mid - 1;
+			break;
 		}
 	}
-	cout<<ans<<endl;
+	printf("%lld\n",min(n,ans));
 	return 0;
 }

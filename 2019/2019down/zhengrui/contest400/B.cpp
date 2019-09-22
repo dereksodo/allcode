@@ -22,39 +22,21 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 100005;
-int a[maxn];
+const int maxn = 1e6 + 6;
+int cnt[maxn][30];
+map< pair<int,int>,int > mp;
 int main(int argc, char const *argv[])
 {
-	int n;
-	cin>>n;
-	for(int i = 1;i <= n; ++i)
+	string s;
+	cin>>s;
+	ll ans = 0;
+	mp[make_pair(0,0)] = 1;
+	for(int i = 0;i < s.size(); ++i)
 	{
-		scanf("%d",&a[i]);
-	}
-	sort(a + 1,a + n + 1);
-	int l = 0,r = n / 2;
-	int ans = 0;
-	while(l <= r)
-	{
-		int mid = (l + r) >> 1;
-		bool flag = 1;
-		for(int i = 1;i <= mid; ++i)
-		{
-			if((a[i] << 1) > a[n - mid + i])
-			{
-				flag = 0;
-				break;
-			}
-		}
-		if(flag)
-		{
-			ans = mid,l = mid + 1;
-		}
-		else
-		{
-			r = mid - 1;
-		}
+		memcpy(cnt[i + 1],cnt[i],sizeof(cnt[i]));
+		cnt[i + 1][s[i] - 'A'] = cnt[i][s[i] - 'A'] + 1;
+		ans += mp[make_pair(cnt[i + 1][0] - cnt[i + 1][1],cnt[i + 1][1] - cnt[i + 1][2])];
+		mp[make_pair(cnt[i + 1][0] - cnt[i + 1][1],cnt[i + 1][1] - cnt[i + 1][2])]++;
 	}
 	cout<<ans<<endl;
 	return 0;

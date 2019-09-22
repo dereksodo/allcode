@@ -22,15 +22,16 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const ll maxn = 100005;
-const ll maxn2 = 18;
+const int maxn = 100005;
+const int maxn2 = 18;
 struct edge{
-	ll to,next;
+	int to,next;
 }e[maxn << 1];
-ll tot,head[maxn],depth[maxn],fa[maxn][maxn2];
-ll n,m;
-ll c[maxn],d[maxn];
-void addedge(ll x,ll y)
+int tot,head[maxn],depth[maxn],fa[maxn][maxn2];
+int n,m;
+int c[maxn],d[maxn];
+
+void addedge(int x,int y)
 {
 	e[++tot].to = y;
 	e[tot].next = head[x];
@@ -41,11 +42,11 @@ void addedge(ll x,ll y)
 	head[y] = tot;
 }
 
-void dfs(ll u)
+void dfs(int u)
 {
-	for(ll i = head[u];i; i = e[i].next)
+	for(int i = head[u];i; i = e[i].next)
 	{
-		ll v = e[i].to;
+		int v = e[i].to;
 		if(v == fa[u][0])
 		{
 			continue;
@@ -58,23 +59,23 @@ void dfs(ll u)
 
 void pre()
 {
-	for(ll j = 1;j < maxn2; ++j)
+	for(int j = 1;j < maxn2; ++j)
 	{
-		for(ll i = 1;i <= n; ++i)
+		for(int i = 1;i <= n; ++i)
 		{
 			fa[i][j] = fa[fa[i][j - 1]][j - 1];
 		}
 	}
 }
 
-ll LCA(ll x,ll y)
+int LCA(int x,int y)
 {
 	if(depth[x] < depth[y])
 	{
 		swap(x,y);
 	}
-	ll t = depth[x] - depth[y];
-	for(ll i = 20;i >= 0; --i)
+	int t = depth[x] - depth[y];
+	for(int i = 17;i >= 0; --i)
 	{
 		if(t & (1 << i))
 		{
@@ -85,8 +86,8 @@ ll LCA(ll x,ll y)
 	{
 		return x;
 	}
-	// printf("x = %lld,y = %lld\n",x,y);
-	for(ll i = 17;i >= 0; --i)
+	// printf("x = %d,y = %d\n",x,y);
+	for(int i = 17;i >= 0; --i)
 	{
 		if(fa[x][i] != fa[y][i])
 		{
@@ -100,69 +101,87 @@ ll LCA(ll x,ll y)
 	}
 	return x;
 }
-map<ll,ll> li[maxn];
-void creat(ll index,ll beg,ll end)
+// map<int,int> li[maxn];
+// void creat(int index,int beg,int end)
+// {
+// 	if(depth[beg] > depth[end])
+// 	{
+// 		swap(beg,end);
+// 	}
+// 	// printf("%d %d,lca = %d\n",end,beg,LCA(end,beg));
+// 	int ance = LCA(end,beg);
+// 	if(ance != beg)
+// 	{
+// 		creat(index,end,ance);
+// 		creat(index,ance,beg);
+// 	}
+// 	else
+// 	{
+// 		int now = end;
+// 		while(now != beg)
+// 		{
+// 			li[index][now] = 1;
+// 			now = fa[now][0];
+// 		}
+// 		li[index][beg] = 1;
+// 	}
+// }
+int solve(int a,int b,int c,int d)
 {
-	if(depth[beg] > depth[end])
+	int sa = LCA(a,b);
+	int sc = LCA(c,d);
+	if(depth[sa] < depth[sc])
 	{
-		swap(beg,end);
+		swap(sa,sc);
+		swap(a,c);
+		swap(b,d);
 	}
-	// printf("%lld %lld,lca = %lld\n",end,beg,LCA(end,beg));
-	ll ance = LCA(end,beg);
-	if(ance != beg)
+	if(LCA(sa,c) == sa || LCA(sa,d) == sa)
 	{
-		creat(index,end,ance);
-		creat(index,ance,beg);
+		return 1;
 	}
-	else
-	{
-		ll now = end;
-		while(now != beg)
-		{
-			li[index][now] = 1;
-			now = fa[now][0];
-		}
-		li[index][beg] = 1;
-	}
+	return 0;
 }
 int main(int argc, char const *argv[])
 {
-	ll n,m;
+	memset(head,-1,sizeof(head));
+	int n,m;
 	cin>>n>>m;
-	for(ll i = 1;i < n; ++i)
+	for(int i = 1;i < n; ++i)
 	{
-		ll x,y;
-		scanf("%lld%lld",&x,&y);
-		--x,--y;
+		int x,y;
+		scanf("%d%d",&x,&y);
+		// --x,--y;
 		addedge(x,y);
 	}
-	dfs(0);
+	dfs(1);
 	pre();
-	for(ll i = 1;i <= m; ++i)
+	for(int i = 1;i <= m; ++i)
 	{
-		scanf("%lld%lld",&c[i],&d[i]);
-		--c[i],--d[i];
-		creat(i,c[i],d[i]);
+		scanf("%d%d",&c[i],&d[i]);
+		// --c[i],--d[i];
+		// creat(i,c[i],d[i]);
 	}
-	// for(ll i = 1;i <= m; ++i)
+	// for(int i = 1;i <= m; ++i)
 	// {
-	// 	printf("%lld -> %lld\n",c[i],d[i]);
+	// 	printf("%d -> %d\n",c[i],d[i]);
 	// 	for(auto iter = li[i].begin();iter != li[i].end(); ++iter)
 	// 	{
-	// 		printf("%lld ",iter->first);
+	// 		printf("%d ",iter->first);
 	// 	}
 	// 	printf("\n");
 	// }
 	ll ans = 0;
-	for(ll i = 1;i <= m; ++i)
+	for(int i = 1;i <= m; ++i)
 	{
-		for(ll j = i + 1;j <= m; ++j)
+		for(int j = i + 1;j <= m; ++j)
 		{
-			if((li[j][LCA(c[i],d[i])] == 1)
-				|| (li[i][LCA(c[j],d[j])]) == 1)
-			{
-				ans++;
-			}
+			// if((li[j][LCA(c[i],d[i])] == 1)
+			// 	|| (li[i][LCA(c[j],d[j])]) == 1)
+			// {
+			// 	ans++;
+			// }
+			ans += solve(c[i],d[i],c[j],d[j]);
 		}
 	}
 	cout<<ans<<endl;

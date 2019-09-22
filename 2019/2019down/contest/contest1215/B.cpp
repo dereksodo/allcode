@@ -22,40 +22,47 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 100005;
-int a[maxn];
+const int maxn = 2e5 + 5;
+ll a[maxn];
+ll dp[maxn][2];
 int main(int argc, char const *argv[])
 {
 	int n;
 	cin>>n;
+	a[0] = -1;
 	for(int i = 1;i <= n; ++i)
 	{
-		scanf("%d",&a[i]);
-	}
-	sort(a + 1,a + n + 1);
-	int l = 0,r = n / 2;
-	int ans = 0;
-	while(l <= r)
-	{
-		int mid = (l + r) >> 1;
-		bool flag = 1;
-		for(int i = 1;i <= mid; ++i)
+		ll x;
+		scanf("%lld",&x);
+		if(x > 0)
 		{
-			if((a[i] << 1) > a[n - mid + i])
-			{
-				flag = 0;
-				break;
-			}
-		}
-		if(flag)
-		{
-			ans = mid,l = mid + 1;
+			a[i] = 1;
 		}
 		else
 		{
-			r = mid - 1;
+			a[i] = 0;
 		}
 	}
-	cout<<ans<<endl;
+	for(int i = 1;i <= n; ++i)
+	{
+		if(a[i] == 1)
+		{
+			dp[i][0] = dp[i - 1][0] + 1;//1
+			dp[i][1] = dp[i - 1][1];//-1
+		}
+		else
+		{
+			dp[i][0] = dp[i - 1][1];//1
+			dp[i][1] = dp[i - 1][0] + 1;//-1
+		}
+		// printf("%lld %lld\n",dp[i][0],dp[i][1]);
+	}
+	ll ans1 = 0,ans2 = 0;
+	for(int i = 1;i <= n; ++i)
+	{
+		ans1 += dp[i][0];
+		ans2 += dp[i][1];
+	}
+	printf("%lld %lld\n",ans2,ans1);
 	return 0;
 }
