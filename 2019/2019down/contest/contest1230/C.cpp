@@ -22,43 +22,42 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 200005;
-int a[maxn];
-int fa[maxn],fa2[maxn];
-int ffa(int x)
-{
-	return fa[x] == x ? x : (fa[x] = ffa(fa[x]));
-}
+const int maxn = 15;
+int G[maxn][maxn];
 int main(int argc, char const *argv[])
 {
-	int n;
-	cin>>n;
-	for(int i = 1;i <= n; ++i)
+	int n,m;
+	cin>>n>>m;
+	for(int i = 1;i <= m; ++i)
 	{
-		scanf("%d",&a[i]);
-		fa[i] = i;
+		int x,y;
+		scanf("%d%d",&x,&y);
+		G[x][y] = 1;
+		G[y][x] = 1;
 	}
-	int cir = 0,root = 0;
-	for(int i = 1;i <= n; ++i)
+	if(n <= 6)
 	{
-		if(a[i] == i)
-		{
-			root = 1;
-		}	
+		cout<<m<<endl;
 	}
-	for(int i = 1;i <= n; ++i)
+	else
 	{
-		int fx = ffa(a[i]);
-		int fy = ffa(i);
-		if(fx == fy)
+		int c = 0x3f3f3f3f;
+		for(int i = 1;i <= 7; ++i)
 		{
-			++cir;
+			for(int j = 1;j <= 7; ++j)
+			{
+				int t = 0;
+				for(int k = 1;k <= 7; ++k)
+				{
+					if(G[i][k] && G[j][k])
+					{
+						t++;
+					}
+				}
+				c = min(c,t);
+			}
 		}
-		else
-		{
-			fa[fx] = fy;
-		}
+		cout<<m - c<<endl;
 	}
-	cout<<cir - root<<endl;
 	return 0;
 }

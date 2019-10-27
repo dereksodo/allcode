@@ -22,43 +22,55 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 200005;
-int a[maxn];
-int fa[maxn],fa2[maxn];
-int ffa(int x)
-{
-	return fa[x] == x ? x : (fa[x] = ffa(fa[x]));
-}
 int main(int argc, char const *argv[])
 {
-	int n;
-	cin>>n;
-	for(int i = 1;i <= n; ++i)
+	string s;
+	ll t;
+	cin>>s>>t;
+	ll x,y;
+	x = y = 0;
+	for(int i = 0;i < s.size(); ++i)
 	{
-		scanf("%d",&a[i]);
-		fa[i] = i;
-	}
-	int cir = 0,root = 0;
-	for(int i = 1;i <= n; ++i)
-	{
-		if(a[i] == i)
+		if(s[i] == 'N')
 		{
-			root = 1;
-		}	
-	}
-	for(int i = 1;i <= n; ++i)
-	{
-		int fx = ffa(a[i]);
-		int fy = ffa(i);
-		if(fx == fy)
+			y++;
+		}
+		else if(s[i] == 'S')
 		{
-			++cir;
+			y--;
+		}
+		else if(s[i] == 'W')
+		{
+			x--;
 		}
 		else
 		{
-			fa[fx] = fy;
+			x++;
 		}
 	}
-	cout<<cir - root<<endl;
+	ll times = t / (ll(s.size()));
+	x *= times;
+	y *= times;
+	t %= (ll(s.size()));
+	for(int i = 0;i < t; ++i)
+	{
+		if(s[i] == 'N')
+		{
+			y++;
+		}
+		else if(s[i] == 'S')
+		{
+			y--;
+		}
+		else if(s[i] == 'W')
+		{
+			x--;
+		}
+		else
+		{
+			x++;
+		}
+	}
+	printf("%lld %lld\n",x,y);
 	return 0;
 }

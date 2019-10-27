@@ -22,43 +22,32 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 200005;
-int a[maxn];
-int fa[maxn],fa2[maxn];
-int ffa(int x)
-{
-	return fa[x] == x ? x : (fa[x] = ffa(fa[x]));
-}
 int main(int argc, char const *argv[])
 {
-	int n;
-	cin>>n;
+	set<int> s;
+	deque<int> dq; 
+	int n,k;
+	cin>>n>>k;
 	for(int i = 1;i <= n; ++i)
 	{
-		scanf("%d",&a[i]);
-		fa[i] = i;
-	}
-	int cir = 0,root = 0;
-	for(int i = 1;i <= n; ++i)
-	{
-		if(a[i] == i)
+		int x;
+		scanf("%d",&x);
+		if(s.find(x) == s.end())
 		{
-			root = 1;
-		}	
-	}
-	for(int i = 1;i <= n; ++i)
-	{
-		int fx = ffa(a[i]);
-		int fy = ffa(i);
-		if(fx == fy)
-		{
-			++cir;
-		}
-		else
-		{
-			fa[fx] = fy;
+			s.insert(x);
+			if(dq.size() == k)
+			{
+				s.erase(dq.back());
+				dq.pop_back();
+			}
+			dq.push_front(x);
 		}
 	}
-	cout<<cir - root<<endl;
+	printf("%d\n",dq.size());
+	for(int i = 0;i < dq.size(); ++i)
+	{
+		printf("%d ",dq[i]);
+	}
+	printf("\n");
 	return 0;
 }

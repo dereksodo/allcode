@@ -13,6 +13,7 @@
 #include <cassert>
 #include <climits>
 #include <numeric>
+#include <sstream>
 using namespace std;
 typedef long long ll;
 #define DEBUG
@@ -23,6 +24,8 @@ typedef long long ll;
 #endif
 int main(int argc, char const *argv[])
 {
-	
+	int n,k;
+	cin>>n>>k;
+	cout<<(n / k)<<endl;
 	return 0;
 }

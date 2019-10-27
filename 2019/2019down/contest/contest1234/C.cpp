@@ -22,43 +22,40 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 200005;
-int a[maxn];
-int fa[maxn],fa2[maxn];
-int ffa(int x)
-{
-	return fa[x] == x ? x : (fa[x] = ffa(fa[x]));
-}
 int main(int argc, char const *argv[])
 {
-	int n;
-	cin>>n;
-	for(int i = 1;i <= n; ++i)
+	int q;
+	cin>>q;
+	while(q--)
 	{
-		scanf("%d",&a[i]);
-		fa[i] = i;
-	}
-	int cir = 0,root = 0;
-	for(int i = 1;i <= n; ++i)
-	{
-		if(a[i] == i)
+		int n;
+		cin>>n;
+		string s[2];
+		cin>>s[0]>>s[1];
+	 	int r = 0,c = 0;
+		for(c = 0;c < n; ++c)
 		{
-			root = 1;
-		}	
-	}
-	for(int i = 1;i <= n; ++i)
-	{
-		int fx = ffa(a[i]);
-		int fy = ffa(i);
-		if(fx == fy)
+			if(s[r][c] > '2')
+			{
+				if(s[1 - r][c] < '3')
+				{
+					break;
+				}
+				else
+				{
+					r = 1 - r;
+				}
+			}
+		}
+		if(c == n && r == 1)
 		{
-			++cir;
+			printf("YES");
 		}
 		else
 		{
-			fa[fx] = fy;
+			printf("NO");
 		}
+		printf("\n");
 	}
-	cout<<cir - root<<endl;
 	return 0;
 }
