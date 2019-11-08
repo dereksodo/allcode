@@ -22,13 +22,30 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
-const int maxn = 55;
-int vis[maxn];
-int now;
+const int maxbit = 35;
+const int maxn = 1e5 + 5;
+ll a[maxn],c[maxbit];
 int main(int argc, char const *argv[])
 {
-	int n,m;
-	cin>>n>>m;
-	for(int)
+	ll n;
+	cin>>n;
+	for(ll i = 1;i <= n; ++i)
+	{
+		ll x;
+		scanf("%lld",&x);
+		for(ll j = 0;j < 30; ++j)
+		{
+			if(x & (1 << j))
+			{
+				a[++c[j]] += (1 << j);
+			}
+		}
+	}
+	ll ans = 0;
+	for(ll i = 1;i <= n; ++i)
+	{
+		ans += a[i] * a[i];
+	}
+	cout<<ans<<endl;
 	return 0;
 }

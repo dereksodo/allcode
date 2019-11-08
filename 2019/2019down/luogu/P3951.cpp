@@ -24,6 +24,8 @@ typedef long long ll;
 #endif
 int main(int argc, char const *argv[])
 {
-	
+	ll a,b;
+	scanf("%lld%lld",&a,&b);
+	cout<<(a - 1) * (b - 1) - 1<<endl;
 	return 0;
 }

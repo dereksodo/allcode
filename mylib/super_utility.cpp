@@ -8,8 +8,6 @@
 using namespace std;
 const int inf = INT_MAX;
 const int maxn = 105;
-//start 3:45
-//end 3:58
 struct heap{
 	int a[maxn];
 	int size;

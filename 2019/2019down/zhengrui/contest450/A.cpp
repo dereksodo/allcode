@@ -24,6 +24,20 @@ typedef long long ll;
 #endif
 int main(int argc, char const *argv[])
 {
-	
+	int n;
+	cin>>n;
+	set<int> s;
+	for(int i = 1;i <= n; ++i)
+	{
+		int k;
+		scanf("%d",&k);
+		while(k--)
+		{
+			int x;
+			scanf("%d",&x);
+			s.insert(x);
+		}
+	}
+	cout<<int(s.size())<<endl;
 	return 0;
 }

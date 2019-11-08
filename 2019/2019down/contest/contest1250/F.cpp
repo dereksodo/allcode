@@ -24,6 +24,17 @@ typedef long long ll;
 #endif
 int main(int argc, char const *argv[])
 {
-	
+	int n;
+	cin>>n;
+	int sum = 0x3f3f3f3f;
+	for(int i = 1;i * i <= n; ++i)
+	{
+		if(n % i == 0)
+		{
+			int i2 = n / i;
+			sum = min(sum,(i + i2) * 2);
+		}
+	}
+	cout<<sum<<endl;
 	return 0;
 }

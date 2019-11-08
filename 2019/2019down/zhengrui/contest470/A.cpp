@@ -22,8 +22,14 @@ typedef long long ll;
 #else
 	#define debug(...)
 #endif
+ll gcd(ll a,ll b)
+{
+	return b == 0 ? a : gcd(b,a % b);
+}
 int main(int argc, char const *argv[])
 {
-	
+	ll a,b;
+	cin>>a>>b;
+	cout<<(a + b - gcd(a,b))<<endl;
 	return 0;
 }
