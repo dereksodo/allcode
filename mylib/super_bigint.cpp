@@ -219,22 +219,42 @@ struct lnum{
 		*this = *this - b;
 		return *this;
 	}
-	void print(const lnum b)
+	string to_string()
 	{
+		string ret2;
 		for(int i = siz - 1;i >= 0; --i)
 		{
+			char ret[10];
 			if(i == siz - 1)
 			{
-				printf("%d",b.a[i]);
+				sprintf(ret,"%d",a[i]);
 			}
 			else
 			{
-				printf("%03d",b.a[i]);
+				sprintf(ret,"%03d",a[i]);
 			}
+			ret2 += string(ret);
 		}
-		printf("\n");
+		return ret2;
+	}
+	void print()
+	{
+		printf("%s\n",to_string().c_str());
 	}
 };
+lnum mypow(lnum a,int t)
+{
+	if(t == 0)
+	{
+		return lnum(1);
+	}
+	if(t == 1)
+	{
+		return a;
+	}
+	lnum ret = mypow(a,t / 2);
+	return ret * ret * mypow(a,t % 2);
+}
 ostream& operator <<(ostream &os,const lnum &b)
 {
 	for(int i = b.siz - 1;i >= 0; --i)
