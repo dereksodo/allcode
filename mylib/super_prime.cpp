@@ -77,7 +77,7 @@ void doit2()//O(n)
 		{
 			prime[plen++] = i;
 		}
-		for(int j = 0;j < plen && i * prime[j] <= maxn; ++j)
+		for(int j = 0;j < plen && i * prime[j] < maxn; ++j)
 		{
 			a[i * prime[j]] = 1;
 			if(i % prime[j] == 0)
