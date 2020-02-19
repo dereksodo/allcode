@@ -296,7 +296,7 @@ void doit()
 	debug("hi7\n");
 	doit6();
 	debug("hi6\n");
-	debug("time = %.2lf\n",(clock() + 0.0) / CLOCKS_PER_SEC);
+	debug("time = %.3lfs\n",(clock() + 0.0) / CLOCKS_PER_SEC);
 }
 int main(int argc, char const *argv[])
 {

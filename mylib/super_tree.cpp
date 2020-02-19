@@ -14,7 +14,8 @@ struct tree{
 	{
 		index = a,value = v,left = l,right = r,ascii = asc;
 	}
-	bool operator <(const tree &t)const{
+	bool operator <(const tree &t)const
+	{
 		return value > t.value;
 	}
 };
@@ -783,7 +784,7 @@ namespace bst{
 				clear(oldroot);
 				return;
 			}
-			else if(!ch[root][0])
+			else if(!ch[root][0])//should it be !ch[root][1]?
 			{
 				int oldroot = root;
 				root = ch[root][0];
@@ -801,7 +802,7 @@ namespace bst{
 	};
 	struct splay_2{
 		struct node_for_splay_2{
-		int ch[2],fa,siz,cnt,key;
+			int ch[2],fa,siz,cnt,key;
 		};
 		int root,sz;
 		node_for_splay_2 s[maxn];
@@ -996,7 +997,7 @@ namespace bst{
 				clear(oldroot);
 				return;
 			}
-			else if(!s[root].ch[0])
+			else if(!s[root].ch[0])//should it be !ch[root][1]?
 			{
 				int oldroot = root;
 				root = s[root].ch[0];

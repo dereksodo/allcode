@@ -67,6 +67,7 @@ namespace kmp{
 			if(j == lenb)
 			{
 				printf("%d ",i - lenb + 1);
+				j = nxt[j];
 				flag = 1;
 			}
 		}

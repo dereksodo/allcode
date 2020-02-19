@@ -5,10 +5,14 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include <map>
+#include <set>
+#include <vector>
+#include <cassert>
 using namespace std;
-const int inf = INT_MAX;
-const int maxn = 105;
 struct heap{
+	static const int inf = 0x3f3f3f3f;
+	static const int maxn = 105;
 	int a[maxn];
 	int size;
 	heap()
@@ -203,18 +207,6 @@ struct findLCA{
 };
 int main(int argc, char const *argv[])
 {
-	heap a;
-	a.insert(3);
-	a.insert(4);
-	a.insert(5);
-	a.insert(6);
-	a.print();
-	printf("%d\n",a.pop());
-	printf("%d\n",a.pop());
-	a.insert(1);
-	printf("%d\n",a.pop());
-	a.print();
-	a.clear();
-	a.print();
+	
 	return 0;
 }

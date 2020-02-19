@@ -6,7 +6,7 @@
 #include <queue>
 #include <ctime>
 using namespace std;
-const int maxn = 10000;
+const int maxn = 1e4 + 5;
 const int inf = 1e9 + 7;
 struct edge{
 	int from;
@@ -31,6 +31,10 @@ struct node_for_dijkstra_fast{
 		printf("index = %d,dist = %d\n",ind,dist);
 	}
 };
+struct node{
+	int to,nxt,w;
+}e[maxn];
+int head[maxn],tot;
 int FILE_GRAPH;
 string FILENAME;
 vector<int> G[maxn];
@@ -57,6 +61,26 @@ int findfather(int index)
 		return index;
 	}
 	return father[index] = findfather(father[index]);
+}
+
+void add(int x,int y,int z)
+{
+	e[++tot] = (node){y,head[x],z};
+	head[x] = tot;
+}
+
+void Add(int x,int y,int w)
+{
+	add(x,y,w);
+	q.push(edge(x,y,w));
+	G_value[x].push_back(make_pair(y,w));
+	minp = min(minp,x);
+	minp = min(minp,y);
+	G[x].push_back(y);
+	degree[y]++;
+	A[x][y] = w;
+	A[x][y] = min(A[x][y],w);
+	C[x][y]++;
 }
 
 void bfs(int index)
@@ -296,6 +320,47 @@ void dijkstra_fast(int index)
 	}
 }
 
+//任意图
+bool spfa_c(int u,int fg)
+{
+	vis[u] = 1;
+	for(int i = head[u];i;i = e[i].nxt)
+	{
+		int flag = dis[e[i].to] < (dis[u] + e[i].w);//<:pos,>:neg
+		if(fg)
+		{
+			flag = dis[e[i].to] > (dis[u] + e[i].w);
+		}
+		if(flag)
+		{
+			int v = e[i].to;
+			dis[v] = dis[u] + e[i].w;
+			if(vis[v] || spfa_c(v,fg))
+			{
+				vis[u] = 0;//prevent next memset
+				return 1;
+			}
+		}
+	}
+	vis[u] = 0;
+	return 0;
+}
+void circleck(int fg)
+{
+	int cc = 1;
+	for(int i = 1;i <= n; ++i)
+	{
+		if(spfa_c(i,fg))
+		{
+			cc = 0;
+			printf("Exist one circle from index %d\n",i);
+		}
+	}
+	if(cc)
+	{
+		printf("No circle\n");
+	}
+}
 //单源 ，有向，无向图，
 bool spfa(int index)
 {
@@ -310,6 +375,7 @@ bool spfa(int index)
 	{
 		int cur = q.front();
 		q.pop();
+		vis[cur] = 0;//need this
 		for(int i = 1;i <= n; ++i)
 		{
 			if(A[cur][i] != inf)
@@ -502,7 +568,7 @@ void random_graph(int Max_node,int Max_edge,int Max_value,string filename)
 	fprintf(out,"%d %d\n",realn,realm);
 	for(int i = 0;i < realm; ++i)
 	{
-		fprintf(out,"%d %d %d\n",rand() % (realn) + 1,rand() % (realm) + 1,rand() % Max_value + 1);
+		fprintf(out,"%d %d %d\n",rand() % (realn) + 1,rand() % (realm) + 1,rand() % (Max_value) + 1);
 	}
 	fclose(out);
 	return;
@@ -654,7 +720,7 @@ int ShowMenu()
     printf("| 11.spfa最短路径      | 12.哈密顿回路      |\n");
     printf("| 13.欧拉路径(不同与3) | 14.快速dijkstra    |\n");
     printf("| 15.random图          | 16.进入二分图空间  |\n");
-    printf("| 17.exit				    |\n");
+    printf("| 17.查询正负权回路    | 18.exit            |\n");
     printf("---------------------------------------------\n");
     printf("请选择想要进行的操作:\n");
     int choose;
@@ -662,6 +728,7 @@ int ShowMenu()
     {
     	if(choose >= 1 || choose <= 17)
     	{
+    		printf("选项应该在1~17之间\n");
     		break;
     	}
     }
@@ -688,15 +755,7 @@ int main(int argc,char const *argv[])
 				{
 					int x,y,w;
 					fscanf(in,"%d%d%d",&x,&y,&w);
-					q.push(edge(x,y,w));
-					G_value[x].push_back(make_pair(y,w));
-					minp = min(minp,x);
-					minp = min(minp,y);
-					G[x].push_back(y);
-					degree[y]++;
-					A[x][y] = w;
-					A[x][y] = min(A[x][y],w);
-					C[x][y]++;
+					Add(x,y,w);
 				}
 				FILE_GRAPH = 0;
 				continue;
@@ -708,14 +767,7 @@ int main(int argc,char const *argv[])
 			{
 				int x,y,w;
 				cin>>x>>y>>w;
-				q.push(edge(x,y,w));
-				G_value[x].push_back(make_pair(y,w));
-				minp = min(minp,x);
-				minp = min(minp,y);
-				G[x].push_back(y);
-				degree[y]++;
-				A[x][y] = min(A[x][y],w);
-				C[x][y]++;
+				Add(x,y,w);
 			}
         }
         else if(c == 2)
@@ -729,19 +781,8 @@ int main(int argc,char const *argv[])
 				{
 					int x,y,w;
 					fscanf(in,"%d%d%d",&x,&y,&w);
-					q.push(edge(x,y,w));
-					q.push(edge(y,x,w));
-					G_value[x].push_back(make_pair(y,w));
-					G_value[y].push_back(make_pair(x,w));
-					minp = min(minp,x);
-					minp = min(minp,y);
-					G[x].push_back(y);
-					G[y].push_back(x);
-					degree[y]++;
-					degree[x]++;
-					A[x][y] = A[y][x] = min(A[x][y],w);	
-					C[x][y]++;
-					C[y][x]++;
+					Add(x,y,w);
+					Add(y,x,w);
 				}
 				FILE_GRAPH = 0;
 				continue;
@@ -753,19 +794,8 @@ int main(int argc,char const *argv[])
 			{
 				int x,y,w;
 				cin>>x>>y>>w;
-				q.push(edge(x,y,w));
-				q.push(edge(y,x,w));
-				G_value[x].push_back(make_pair(y,w));
-				G_value[y].push_back(make_pair(x,w));
-				minp = min(minp,x);
-				minp = min(minp,y);
-				G[x].push_back(y);
-				G[y].push_back(x);
-				degree[y]++;
-				degree[x]++;
-				A[x][y] = A[y][x] = min(A[x][y],w);	
-				C[x][y]++;
-				C[y][x]++;
+				Add(x,y,w);
+				Add(y,x,w);
 			}
         }
         else if(c == 3)
@@ -839,6 +869,20 @@ int main(int argc,char const *argv[])
         else if(c == 16)
         {
         	bipartite_graph::main();
+        }
+        else if(c == 17)
+        {
+        	printf("输入:正权(0),负权(1)\n");
+        	int fg;
+        	scanf("%d",&fg);
+        	if(fg != 0 && fg != 1)
+        	{
+        		printf("输入只能为0或1\n");
+        	}
+        	else
+        	{
+        		circleck(fg);
+        	}
         }
         else
         {
