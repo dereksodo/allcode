@@ -30,72 +30,68 @@ int read() {
     return sum;
 }
 const int maxn = 1e6 + 5;
-const int maxm = 30;
-int rmq[maxn][maxm];
-int dfn[maxn],dep[maxn];
+int vis[maxn],dep[maxn],f[maxn];
 int head[maxn],nxt[maxn],to[maxn];
-int lg[maxn],ind[maxn];
-int tot,id,n,m;
+int hd[maxn];
+int ans[maxn * 3];
+int tot,n,m,cnt;
+struct node{
+	int to,nxt,num;
+}q[maxn * 3];
+struct input{
+	int a,b,c;
+}inp[maxn];
 void add(int u,int v)
 {
 	nxt[++tot] = head[u];
 	to[tot] = v;
 	head[u] = tot;
 }
+void add2(int u,int v,int num)
+{
+	q[++cnt] = (node){v,hd[u],num};
+	hd[u] = cnt;//not head
+}
 void dfs(int u,int fa)
 {
-	dfn[++id] = u;
 	dep[u] = dep[fa] + 1;
-	ind[u] = id;
-	for(int i = head[u];i;i = nxt[i])//use this, in function add, 
-									 //nxt[++tot] instead of nxt[tot++]
+	for(int i = head[u];i;i = nxt[i])
 	{
 		int v = to[i];
 		if(v != fa)
 		{
 			dfs(v,u);
-			dfn[++id] = u;
 		}
 	}
 }
-void init()
+int ff(int x)
 {
-	id = 0;
-	dfs(1,0);//rt,0
-	lg[0] = -1;
-	for(int i = 1;i <= id; ++i)
+	return x == f[x] ? x : (f[x] = ff(f[x]));
+}
+void tarjan(int u,int fa)
+{
+	f[u] = u;
+	for(int i = head[u];i;i = nxt[i])
 	{
-		lg[i] = lg[i >> 1] + 1;
-	}
-	for(int i = 1;i <= id; ++i)
-	{
-		rmq[i][0] = dfn[i];
-	}
-	for(int j = 1;j <= lg[id]; ++j)
-	{
-		for(int i = 1;i + (1 << j) - 1 <= id; ++i)
+		int v = to[i];
+		if(v != fa)
 		{
-			if(dep[rmq[i][j - 1]] <= dep[rmq[i + (1 << (j - 1))][j - 1]])
+			if(!vis[v])
 			{
-				rmq[i][j] = rmq[i][j - 1];
-			}
-			else
-			{
-				rmq[i][j] = rmq[i + (1 << (j - 1))][j - 1];
+				tarjan(v,u);
+				f[v] = u;
 			}
 		}
 	}
-}
-int lca(int a,int b)
-{
-	int u = ind[a],v = ind[b];
-	if(u > v)
+	vis[u] = 1;
+	for(int i = hd[u];i;i = q[i].nxt)
 	{
-		swap(u,v);
+		int v = q[i].to;
+		if(vis[v])
+		{
+			ans[q[i].num] = ff(v);
+		}
 	}
-	int k = lg[v - u + 1];
-	int ret1 = rmq[u][k],ret2 = rmq[v - (1 << k) + 1][k];
-	return dep[ret1] > dep[ret2] ? ret2 : ret1;
 }
 int main(int argc, char const *argv[])
 {
@@ -103,18 +99,36 @@ int main(int argc, char const *argv[])
 	for(int i = 1;i < n; ++i)
 	{
 		int x,y;
-		scanf("%d%d",&x,&y);
+		// scanf("%d%d",&x,&y);
+		x = read(),y = read();
 		add(x,y);
 		add(y,x);
 	}
-	init();
-	while(m--)
+	dfs(1,0);
+	int id = 0;
+	for(int i = 1;i <= m; ++i)
 	{
 		int a,b,c;
-		scanf("%d%d%d",&a,&b,&c);
-		int l1 = lca(a,b);
-		int l2 = lca(a,c);
-		int l3 = lca(b,c);
+		// scanf("%d%d%d",&a,&b,&c);
+		a = read(),b = read(),c = read();
+		inp[i] = (input){a,b,c};
+		add2(a,b,++id);
+		add2(b,a,id);
+		add2(a,c,++id);
+		add2(c,a,id);
+		add2(b,c,++id);
+		add2(c,b,id);
+	}
+	tarjan(1,-1);
+	id = 0;
+	for(int i = 1;i <= m; ++i)
+	{
+		int l1 = ans[++id];
+		int l2 = ans[++id];
+		int l3 = ans[++id];
+		int a = inp[i].a;
+		int b = inp[i].b;
+		int c = inp[i].c;
 		int ans,src;
 		if(l1 == l2 && l2 == l3)
 		{
