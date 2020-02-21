@@ -334,157 +334,113 @@ void Huffman(vector< pair<string,int> > vp)
 }
 
 //segment tree
-namespace segment_tree{
+namespace segment_tree{//最好别用，有很多错误
 	struct segtree{
-		struct node_for_segtree{
-			int sum,add;
-		};
-		node_for_segtree node[maxn];
-		int ql,qr;
-		void pushup(int index)
+		static const int maxn = 1e5 + 5;
+		ll sum[maxn << 2],mod;
+		ll add[maxn << 2],mul[maxn << 2];
+		inline void pushup(int rt)
 		{
-			node[index].sum = node[index << 1].sum + node[index << 1 | 1].sum;
+			sum[rt] = (sum[rt << 1] + sum[rt << 1 | 1]) % mod;
 		}
-		void pushdown(int index,int len)
+		void pushdown(int rt,int len)
 		{
-			if(node[index].add)
+			if(mul[rt] == 1 && add[rt] == 0)
 			{
-				int left_num = len >> 1;
-				int right_num = len - left_num;
-				node[index << 1].add += node[index].add;
-				node[index << 1 | 1].add += node[index].add;
-				node[index << 1].sum += node[index].add * left_num;
-				node[index << 1 | 1].sum += node[index].add * right_num;
-				node[index].add = 0;
+				return;
 			}
+			sum[rt << 1] = (sum[rt << 1] * mul[rt] % mod + add[rt] * (len + 1 >> 1) % mod) % mod;
+			sum[rt << 1 | 1] = (sum[rt << 1 | 1] * mul[rt] % mod + add[rt] * (len >> 1) % mod) % mod;
+			
+			mul[rt << 1] = mul[rt << 1] * mul[rt] % mod;
+			mul[rt << 1 | 1] = mul[rt << 1 | 1] * mul[rt] % mod;
+
+			add[rt << 1] = (add[rt << 1] * mul[rt] % mod + add[rt]) % mod;
+			add[rt << 1 | 1] = (add[rt << 1 | 1] * mul[rt] % mod + add[rt]) % mod;	
+
+			mul[rt] = 1,add[rt] = 0;
 		}
-		void build(int index,int l,int r)
+		inline void build(int rt,int l,int r)
 		{
+			mul[rt] = 1;
+			add[rt] = 0;
 			if(l == r)
 			{
-				scanf("%d",&node[index].sum);
-				node[index].add = 0;
+				scanf("%lld",&sum[rt]);
+				sum[rt] %= mod;
 				return;
 			}
-			int mid = (l + r) >> 1;
-			build(index << 1,l,mid);
-			build(index << 1 | 1,mid + 1,r);
-			pushup(index);
+			int mid = l + r >> 1;
+			build(rt << 1,l,mid);
+			build(rt << 1 | 1,mid + 1,r);
+			pushup(rt);
 		}
-		void update1(int index,int l,int r,int v)//segment
+		inline void update(int rt,int l,int r,int left,int right,int fg,ll v)
 		{
-			if(ql > r || qr < l)
+			if(left <= l && r <= right)
 			{
-				return;
-			}
-			if(ql <= l && r <= qr)
-			{
-				node[index].add += v;
-				node[index].sum += (r - l + 1) * v;
-				return;
-			}
-			pushdown(index,r - l + 1);
-			int mid = (l + r) >> 1;
-			update1(index << 1,l,mid,v);
-			update1(index << 1 | 1,mid + 1,r,v);
-			pushup(index);
-		}
-		void update1(int index,int l,int r,int v,int target)//point
-		{
-			if(l == r)
-			{
-				if(l == target)
+				if(fg == 2)
 				{
-					node[index].sum += v;
+					add[rt] = (add[rt] + v) % mod;
+					sum[rt] = (sum[rt] + (r - l + 1) * v) % mod;
+				}
+				else
+				{
+					mul[rt] = mul[rt] * v % mod;
+					add[rt] = add[rt] * v % mod;
+					sum[rt] = sum[rt] * v % mod;
 				}
 				return;
 			}
-			pushdown(index,r - l + 1);
-			int mid = (l + r) >> 1;
-			if(target <= mid)
+			pushdown(rt,r - l + 1);
+			int mid = l + r >> 1;
+			if(left <= mid)
 			{
-				update1(index << 1,l,mid,v,target);
+				update(rt << 1,l,mid,left,right,fg,v);
 			}
-			else
+			if(right > mid)
 			{
-				update1(index << 1 | 1,mid + 1,r,v,target);
+				update(rt << 1 | 1,mid + 1,r,left,right,fg,v);
 			}
-			pushup(index);
+			// pushdown(rt << 1,mid - l + 1);
+			// pushdown(rt << 1 | 1,r - mid);
+			pushup(rt);
 		}
-		void update2(int index,int l,int r,int v)//segment
+		inline ll query(int rt,int l,int r,int left,int right)
 		{
-			if(ql > r || qr < l)
-			{
-				return;
-			}
-			if(ql <= l && r <= qr)
-			{
-				node[index].add = v;
-				node[index].sum = (r - l + 1) * v;
-				return;
-			}
-			pushdown(index,r - l + 1);
-			int mid = (l + r) >> 1;
-			update2(index << 1,l,mid,v);
-			update2(index << 1 | 1,mid + 1,r,v);
-			pushup(index);
-		}
-		void update2(int index,int l,int r,int v,int target)//point
-		{
-			if(l == r)
-			{
-				if(l == target)
-				{
-					node[index].sum = v;
-				}
-				return;
-			}
-			pushdown(index,r - l + 1);
-			int mid = (l + r) >> 1;
-			if(target <= mid)
-			{
-				update2(index << 1,l,mid,v,target);
-			}
-			else
-			{
-				update2(index << 1 | 1,mid + 1,r,v,target);
-			}
-			pushup(index);
-		}
-		int query(int index,int l,int r)
-		{
-			if(ql > r || qr < l)
+			if(l > right || r < left)
 			{
 				return 0;
 			}
-			if(ql <= l && r <= qr)
+			if(left <= l && r <= right)
 			{
-				return node[index].sum;
+				return sum[rt];
 			}
-			pushdown(index,r - l + 1);
-			int mid = (l + r) >> 1;
-			int ans = 0;
-			if(ql <= mid)
+			pushdown(rt,r - l + 1);
+			int mid = l + r >> 1;
+			ll ans = 0;
+			if(left <= mid)
 			{
-				ans += query(index << 1,l,mid);
+				ans += query(rt << 1,l,mid,left,right);
 			}
-			if(qr > mid)
+			if(right > mid)
 			{
-				ans += query(index << 1 | 1,mid + 1,r);
+				ans += query(rt << 1 | 1,mid + 1,r,left,right);
 			}
-			return ans;
+			pushup(rt);
+			return ans % mod;
 		}
-		void print(int index,int l,int r)
+		void print(int rt,int l,int r)
 		{
 			if(l == r)
 			{
-				printf("%d ",node[index].sum);
+				printf("%d ",sum[rt]);
 				return;
 			}
-			pushdown(index,r - l + 1);
+			pushdown(rt,r - l + 1);
 			int mid = (l + r) >> 1;
-			print(index << 1,l,mid);
-			print(index << 1 | 1,mid + 1,r);
+			print(rt << 1,l,mid);
+			print(rt << 1 | 1,mid + 1,r);
 		}
 	};
 	segtree s;
@@ -521,24 +477,19 @@ namespace segment_tree{
 				scanf("%d",&n);
 				printf("输入每一个数\n");
 				s.build(1,1,n);
-				s.ql = s.qr = 0;
 			}
 			else if(c == 2)
 			{
 				int ind,flag,x;
 				printf("请输入编号\n");
 				scanf("%d",&ind);
-				printf("请选择:\n	1.加上x\n	2.变成x\n");
+				printf("请选择:\n	1.加上x\n	2.乘以x\n");
 				scanf("%d",&flag);
 				printf("请输入x\n");
 				scanf("%d",&x);
-				if(flag == 1)
+				if(flag == 1 || flag == 2)
 				{
-					s.update1(1,1,n,x,ind);
-				}
-				else if(flag == 2)
-				{
-					s.update2(1,1,n,x,ind);
+					s.update(1,1,n,ind,ind,flag,x);
 				}
 				else
 				{
@@ -548,20 +499,16 @@ namespace segment_tree{
 			}
 			else if(c == 3)
 			{
-				int flag,x;
+				int flag,x,l,r;
 				printf("请输入左端点,右端点\n");
-				scanf("%d%d",&s.ql,&s.qr);
-				printf("请选择:\n	1.都加上x\n	2.都变成x\n");
+				scanf("%d%d",&l,&r);
+				printf("请选择:\n	1.都加上x\n	2.都乘以x\n");
 				scanf("%d",&flag);
 				printf("请输入x\n");
 				scanf("%d",&x);
-				if(flag == 1)
+				if(flag == 1 || flag == 2)
 				{
-					s.update1(1,1,n,x);
-				}
-				else if(flag == 2)
-				{
-					s.update2(1,1,n,x);
+					s.update(1,1,n,l,r,flag,x);
 				}
 				else
 				{
@@ -571,9 +518,10 @@ namespace segment_tree{
 			}
 			else if(c == 4)
 			{
+				int l,r;
 				printf("请输入左端点,右端点\n");
-				scanf("%d%d",&s.ql,&s.qr);
-				printf("%d\n",s.query(1,1,n));
+				scanf("%d%d",&l,&r);
+				printf("%d\n",s.query(1,1,n,l,r));
 			}
 			else if(c == 5)
 			{
