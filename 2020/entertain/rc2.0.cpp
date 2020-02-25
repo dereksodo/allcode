@@ -1,4 +1,4 @@
-//computer vs computer
+//computer vs human
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
@@ -61,7 +61,7 @@ struct card{
 	{
 		if(dot > maxe)//two kings
 		{
-			return dot + 39;
+			return dot + (allcount - 2 - 14);
 		}
 		return dot * 4 + suit - 4;
 	}
@@ -114,6 +114,11 @@ struct card{
 		else if(suit == 1)
 		{
 			ch = 'C';
+		}
+		if(dott == 0)
+		{
+			printf("ERROR!\n");
+			while(1);
 		}
 		printf("%d%c",dott,ch);
 		if(dott > maxe)
@@ -177,7 +182,6 @@ int nxt(int k)
 }
 struct situation{
 	int vis[allcount + 5];
-	int p1,p2;
 	void clear()
 	{
 		memset(vis,0x00,sizeof(vis));
@@ -526,10 +530,17 @@ void checkallfunc()
 	// printf("%d win\n",a1.h < a2.h ? 2 : 1);
 	// getchar();
 	// tocard(53).deg();
-	player[0].input_from_sc();
+	// player[0].input_from_sc();
 	// player[1].input_from_sc();
-	player[0].deg();
+	// player[0].deg();
 	// printf("%.2lf %.2lf\n",player[0].h.winprobe(),ceil(maxamount(player[0].h.winprobe())));
+	// for(int i = 0;i < allcount; ++i)
+	// {
+	// 	if(tocard(i).index() != i)
+	// 	{
+	// 		printf("ERROR %d\n",i);
+	// 	}
+	// }
 }
 void showresult(int fg,int winner = 0,int m = 0)
 {
@@ -577,12 +588,12 @@ int main(int argc, char const *argv[])
 		player[1].setp();
 		int rounds = 9;
 		int winner = rand() & 1;
-		showresult(0);
+		// showresult(0);
 		int lastmy = 0;
 		while(rounds--)
 		{
-			player[0].h = gethand();
-			player[1].h = gethand();
+			player[0].h = gethand();//computer
+			player[1].h = gethand();//human
 			// while(1);
 			showcards();
 			setvis(0);
@@ -590,8 +601,17 @@ int main(int argc, char const *argv[])
 			int my = 5;
 			while(1)
 			{
-				int m = player[last].nxthand(my);
-				print(last,m);
+				int m;
+				if(last == 0)
+				{
+					m = player[last].nxthand(my);
+					print(last,m);
+				}
+				else
+				{
+					//-1:desert  -2:open
+					scanf("%d",&m);
+				}
 				if(m >= maxMoney)
 				{
 					m = -2;
@@ -637,19 +657,3 @@ int main(int argc, char const *argv[])
 	}
 	return 0;
 }
-
-
-
-//拟合曲线
-//参数表
-// 0.1,0.016667
-// 0.2,0.03334
-// 0.3,0.05
-// 0.4,0.08334
-// 0.5,0.11667
-// 0.6,0.16667
-// 0.7,0.2
-// 0.8,0.33334
-// 0.9,0.1
-//方程
-//coEfficient
