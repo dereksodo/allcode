@@ -1,3 +1,47 @@
+/*
+程序编写： 5个小时，调试1小时
+功能介绍
+1、实现了标准一副扑克的玩法，每个玩家轮流起三张牌，
+按照炸（三张一样）>清一色>对子>单张的标准玩法
+2、扑克大小王可以替换为任何一张牌（自动按照使自己牌面最大的配发）
+3、第一个玩家叫赌注数额后，对方可以叫： 开牌（比大小）、
+逃跑（按照上次的共识输钱），叫一个更大的赌注。
+4、程序实现了，自动根据起的牌面计算赢率，根据自己持有的钱总数，
+计算最佳赌注（大于时随机决定是否逃跑）
+5、程序通过8次函数拟合实现了每次加赌的数额
+6、程序模拟了两个计算机玩家
+7、程序可以模拟每次两个玩家的牌面、叫赌注的数额、跟进数额等过程，模拟输赢多少的结果
+8、程序可以修改为计算机和真人玩家的对抗
+9、程序加入了多种随机数（例如牌面小时，通过叫一个大的赌注吓跑对方；
+在胜算低于阀值的时候随机选择开牌而不是逃跑），最大可能的模拟真人对抗的心理
+10、程序只能在命令行中玩
+11、在对抗中，需要8个核心参数，其中nt.cpp用于训练参数、rc2.0.cpp用于人和电脑对抗测试、
+    run.cpp用户电脑和电脑对抗，检验每组参数的效果、robotcard.cpp用于测试参数，10轮返回一次对抗结果
+*/
+
+// 使用\e[来转义颜色
+// 其中\e[01;34m 代表01加粗，34蓝色
+// 其中\e[01;31m 代表01加粗，31红色
+// 其中\e[0m 代表还原颜色
+
+// 字颜色码：30-39
+
+// 30:黑色
+// 31:红色
+// 32:绿色
+// 33:黄色
+// 34:蓝色
+// 35:紫色
+// 36:深绿
+// 37:白色
+
+// 样式码：
+// \e[0m 关闭所有属性
+// \e[1m 设置高亮
+// \e[4m 下划线
+// \e[5m 闪烁
+// \e[7m 反显
+// \e[8m 消隐
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
@@ -274,12 +318,12 @@ struct hand{
 		else if(c1.dot == c2.dot)
 		{
 			pri = 4;
-			p2 = c1.dot * 14 * 14 + c3.dot * 14 + c3.suit;
+			p2 = c1.dot * 14 * 14 + c3.dot * 14 + c2.suit;
 		}
 		else if(c2.dot == c3.dot)
 		{
 			pri = 4;
-			p2 = c2.dot * 14 * 14 + c1.dot * 14 + c1.suit;
+			p2 = c2.dot * 14 * 14 + c1.dot * 14 + c3.suit;
 		}
 		else
 		{
@@ -373,6 +417,17 @@ struct hand{
 		return (p2 - p1 + 0.0) / (p2 + 0.0);
 	}
 };
+ld randme(ld a,ld b)
+{
+	ld len = b - a;
+	return (((rand()) % maxn) + 0.0) / (maxn + 0.0) * len + a; 
+}
+int randme2(int a,int b)
+{
+	int res = a + (((rand()) % maxn) % (b - a + 1));
+	// assert(res < 0);
+	return res;
+}
 int check(ld p)
 {
 	return abs(rand() + rand() * rand()) % maxn < int(p * (maxn + 0.0));
@@ -384,19 +439,42 @@ struct robot{
 	int a[30];
 	int getrnd(int pos)
 	{
-		return ((rand() % a[pos]) / 3 * ((int(maxMoney) / 50)) + 2) % 210;
+		return ((rand() % a[pos]) / 3 * ((int(maxMoney) / 50)) + 2) % int(maxMoney + 10);
 	}
-	void setp()
+	void setp(bool fg = 0)
 	{
-		money = int(maxMoney);
-		f[1] = 1.5;
-		f[2] = 1.1;
-		f[3] = 0.2;
-		a[1] = 20;
-		a[2] = 10;
-		a[3] = 5;
-		f[4] = 0.1;
-		f[5] = 0.2;
+		money = maxMoney;
+		if(fg)
+		{
+			f[1] = 1.5;
+			f[2] = 1.1;
+			f[3] = 0.2;
+			a[1] = 20;
+			a[2] = 10;
+			a[3] = 5;
+			f[4] = 0.1;
+			f[5] = 0.2;
+		}
+		else
+		{
+			f[1] = randme(1.0,10.0);
+			f[2] = randme(1.0,10.0);
+			f[3] = randme(0.0,10.0);
+			f[4] = randme(0.0,1.0);
+			f[5] = randme(0.0,1.0);
+			a[1] = randme2(1,100);
+			a[2] = randme2(1,100);
+			a[3] = randme2(1,100);
+		}
+	}
+	void setp1(ld f1,ld f2,ld f3,ld f4,ld f5,int a1,int a2,int a3,int fg = 0)
+	{
+		if(fg == 0)
+		{
+			money = 0;
+		}
+		f[1] = f1,f[2] = f2,f[3] = f3,f[4] = f[4],f[5] = f5;
+		a[1] = a1,a[2] = a2,a[3] = a3;
 	}
 	void deg(int k)
 	{
@@ -420,7 +498,6 @@ struct robot{
 		ld pro = h.winprobe();
 		ld maxmoney = maxamount(pro);
 		int res = ceil(maxmoney);//anthing you want
-		debug("res = %d,other = %d\n",res,other);
 		if(ld(other) * f[1] < ld(res))
 		{
 			return other + getrnd(1);
@@ -477,7 +554,7 @@ hand gethand()
 {
 	return hand(getcard(),getcard(),getcard());
 }
-void print(int p,int op,int cnt)
+void print(int p,int op,int cnt,int fg = 0)
 {
 	if(op < 0)
 	{
@@ -487,31 +564,61 @@ void print(int p,int op,int cnt)
 	{
 		printf(" ");
 	}
-	if(op == -1)
+	if(fg != 0)
 	{
-		printf("person %d runs away    ",p + 1);
-	}
-	else if(op == -2)
-	{
-		printf("person %d asks to open the cards    ",p + 1);
+		printf("computer");
 	}
 	else
 	{
-		
-		printf("person %d asked to %d\n",p + 1,op);
+		printf("person %d",p + 1);
+	}
+	if(op == -1)
+	{
+		printf(" runs away    ");
+	}
+	else if(op == -2)
+	{
+		printf(" asks to open the cards    ");
+	}
+	else
+	{
+		printf(" asked to %d\n",op);
 	}
 }
 void setvis(int k,int fg)
 {
 	now.vis[player[k].h.pre1.index()] = now.vis[player[k].h.pre2.index()] = now.vis[player[k].h.pre3.index()] = fg;
 }
-void showcards()
+void showcards(int fg = 0)
 {
 	printf(">>>Info:\n");
-	printf("   player %d:",1);
-	player[0].deg(3);
-	printf("    amount:%.2lf\n",maxamount(player[0].h.winprobe()));
-	printf("   player %d:",2);
+	if(!fg)
+	{
+		printf("   player %d:",1);
+		player[0].deg(3);
+		printf("    amount:%.2lf\n",maxamount(player[0].h.winprobe()));
+		printf("   player %d:",2);
+	}
+	else
+	{
+		printf("   you:");
+	}
 	player[1].deg(3);
 	printf("    amount:%.2lf\n\n",maxamount(player[1].h.winprobe()));
+}
+void showresult(int fg,int winner = 0,int m = 0,int k = 0)
+{
+	if(fg)
+	{
+		for(int i = 1;i <= k; ++i) printf(" ");
+		printf("\e[01;31m%d win with %d\e[0m\n",winner + 1,m);
+		for(int i = 1;i <= k; ++i) printf(" ");
+		printf("player %d's money is %d 	person %d's money is %d\n\n",1,player[0].money,2,player[1].money);
+	}
+	else
+	{
+		system("clear");
+		printf("\e[4m> Game %d:\e[0m\n",++roundCount);
+		printf("player %d's money is %d 	person %d's money is %d\n\n",1,player[0].money,2,player[1].money);
+	}
 }

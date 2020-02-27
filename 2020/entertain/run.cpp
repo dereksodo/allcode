@@ -1,5 +1,5 @@
-//computer vs computer
-// 用于测试参数，10轮返回一次对抗结果
+//computer vs computer  step by step
+// 用于查看电脑和电脑对抗，可以分析每次对抗的参数
 #include "robotcard.hpp"
 
 void checkallfunc()
@@ -46,10 +46,10 @@ int main(int argc, char const *argv[])
 		player[0].setp1(4.713712,4.327479,4.323815,0.476375,0.519601,33,45,29);
 		int rounds = 9;
 		int winner = rand() & 1;
-		// showresult(0);
+		showresult(0);
 		for(int i = 1;i <= rounds; ++i)
 		{
-			// printf("\e[01;35m>>Round %d\e[0m\n",i);
+			printf("\e[01;35m>>Round %d\e[0m\n",i);
 			player[0].h = gethand();
 			if(i == 9)
 			{
@@ -68,18 +68,19 @@ int main(int argc, char const *argv[])
 			{
 				player[1].h = gethand();
 			}
+			swap(player[0].h,player[1].h);
 			// while(1);
-			// showcards();
+			showcards();
 			setvis(0,0);
 			setvis(1,0);
 			int last = winner;
 			int my = 5;
 			int lastmy = 0;
-			// printf(">>>Bid:\n");
+			printf(">>>Bid:\n");
 			while(1)
 			{
 				int m = player[last].nxthand(my);
-				// print(last,m,3);
+				print(last,m,3);
 				if(m >= maxMoney)
 				{
 					m = -2;
@@ -117,19 +118,13 @@ int main(int argc, char const *argv[])
 			}
 			setvis(0,1);
 			setvis(1,1);
-			// showresult(1,winner,my,3);
-			// getchar();
+			showresult(1,winner,my,3);
+			getchar();
 		}
-		// printf("\e[01;34mGame ends\e[0m\n");
-		// printf("\e[01;35mplayer %d:%d\nplayer %d:%d\e[0m\n",1,player[0].money,2,player[1].money);
-		// getchar();
-		M1 += player[0].money;
-		M2 += player[1].money;
-		// if(Cnt % 10 == 0)
-		{
-			printf("M1 = %d,M2 = %d\n",M1,M2);
-		}
-		// system("clear");
+		printf("\e[01;34mGame ends\e[0m\n");
+		printf("\e[01;35mplayer %d:%d\nplayer %d:%d\e[0m\n",1,player[0].money,2,player[1].money);
+		getchar();
+		system("clear");
 	}
 	return 0;
 }

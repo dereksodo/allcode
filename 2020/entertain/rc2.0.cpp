@@ -1,4 +1,5 @@
 //computer vs human
+//用户人和电脑对抗，可以看到每次牌面信息和赌注信息
 #include "robotcard.hpp"
 
 void checkallfunc()
@@ -13,19 +14,6 @@ void checkallfunc()
 		}
 	}
 }
-void showresult(int fg,int winner = 0,int m = 0)
-{
-	if(fg)
-	{
-		printf("%d win with %d\n",winner + 1,m);
-		printf("player %d's money is %d 	person %d's money is %d\n\n",1,player[0].money,2,player[1].money);
-	}
-	else
-	{
-		printf("> Round %d:\n",roundCount++);
-		printf("player %d's money is %d 	person %d's money is %d\n\n",1,player[0].money,2,player[1].money);
-	}
-}
 int main(int argc, char const *argv[])
 {
 	init();
@@ -36,15 +24,15 @@ int main(int argc, char const *argv[])
 	// }
 	while(1)
 	{
-		++roundCount;
 		now.clear();
-		player[0].setp();
-		player[1].setp();
+		player[0].setp1(4.713712,4.327479,4.323815,3.836897,4.806396,33,45,29,-1);
+		// player[1].setp();
 		int winner = rand() & 1;
-		// showresult(0);
-		int lastmy = 0;
+		showresult(0);
 		for(int i = 1;i <= rounds; ++i)
 		{
+			printf("\e[01;35m>>Round %d\e[0m\n",i);
+			printf("\e[01;36m  -1:desert,-2:open\e[0m\n");
 			player[0].h = gethand();//computer
 			// printf("hi\n");
 			if(i == 9)
@@ -65,27 +53,56 @@ int main(int argc, char const *argv[])
 				player[1].h = gethand();//human
 			}
 			// while(1);
-			showcards();
-			setvis(0);
+			showcards(1);
+			setvis(0,0);
+			setvis(1,0);
 			int last = winner;
 			int my = 5;
+			int lastmy = 0;
+			printf(">>>Bid:\n");
 			while(1)
 			{
 				int m;
 				if(last == 0)
 				{
 					m = player[last].nxthand(my);
-					print(last,m,0);
+					printf("  :");
+					print(last,m,0,-1);
+					if(m < 0)
+					{
+						printf("\n");
+					}
 				}
 				else
 				{
+					printf("  :");
 					//-1:desert  -2:open
 					scanf("%d",&m);
 					// m = -1;
+					if((m >= 0 && ((m < my) && lastmy != 0)) || (m < -2))
+					{
+						printf("***\e[01;31mthe amount need to be -1,-2 or >= %d\e[0m\n",my);
+						continue;
+					}
+					if(m == my)
+					{
+						m = -2;
+					}
+					if(m < 0)
+					{
+						print(last,m,3);
+						printf("\n");
+					}
 				}
 				if(m >= maxMoney)
 				{
 					m = -2;
+				}
+				if(m < 0)
+				{
+					printf("   Computer's Card:");
+					player[0].deg(0);
+					printf("\n");
 				}
 				if(m == -1)
 				{
@@ -118,12 +135,13 @@ int main(int argc, char const *argv[])
 					my = m;
 				}
 			}
-			setvis(1);
-			showresult(1,winner,my);
+			setvis(0,1);
+			setvis(1,1);
+			showresult(1,winner,my,3);
 			printf("finish round %d\n",i);
 		}
-		printf("Game ends\n");
-		printf("player %d:%d\nplayer %d:%d",1,player[0].money,2,player[1].money);
+		printf("\e[01;34mGame ends\e[0m\n");
+		printf("\e[01;35mplayer %d:%d\nplayer %d:%d\e[0m\n",1,player[0].money,2,player[1].money);
 		// getchar();
 	}
 	return 0;
