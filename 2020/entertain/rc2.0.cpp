@@ -25,14 +25,13 @@ int main(int argc, char const *argv[])
 	while(1)
 	{
 		now.clear();
-		player[0].setp1(4.713712,4.327479,4.323815,3.836897,4.806396,33,45,29,-1);
+		player[0].setp1(4.713712,4.327479,4.323815,0.476375,0.519601,10,5,2,-1);
 		// player[1].setp();
 		int winner = rand() & 1;
 		showresult(0);
 		for(int i = 1;i <= rounds; ++i)
 		{
 			printf("\e[01;35m>>Round %d\e[0m\n",i);
-			printf("\e[01;36m  -1:desert,-2:open\e[0m\n");
 			player[0].h = gethand();//computer
 			// printf("hi\n");
 			if(i == 9)
@@ -53,13 +52,14 @@ int main(int argc, char const *argv[])
 				player[1].h = gethand();//human
 			}
 			// while(1);
-			showcards(1);
+			showcards(1,1);
 			setvis(0,0);
 			setvis(1,0);
 			int last = winner;
 			int my = 5;
-			int lastmy = 0;
+			int lastmy = 5;
 			printf(">>>Bid:\n");
+			printf("\e[01;36m   desert,open,or input the amount(>= 5)\e[0m\n");
 			while(1)
 			{
 				int m;
@@ -77,7 +77,34 @@ int main(int argc, char const *argv[])
 				{
 					printf("  :");
 					//-1:desert  -2:open
-					scanf("%d",&m);
+					// scanf("%d",&m);
+					char buf[100];
+					scanf(" %s",buf);
+					if(isdigit(buf[0]))
+					{
+						m = 0;
+						for(int ki = 0;ki < strlen(buf); ++ki)
+						{
+							m = m * 10 + buf[ki] - '0';
+						}
+					}
+
+					else
+					{
+						if(buf[0] == 'd')
+						{
+							m = -1;
+						}
+						else if(buf[0] == 'o')
+						{
+							m = -2;
+						}
+						else
+						{
+							printf("***\e[01;31mInput Not Correct!\e[0m\n");
+							continue;
+						}
+					}
 					// m = -1;
 					if((m >= 0 && ((m < my) && lastmy != 0)) || (m < -2))
 					{
@@ -100,9 +127,10 @@ int main(int argc, char const *argv[])
 				}
 				if(m < 0)
 				{
+					printf("\e[01;31m");
 					printf("   Computer's Card:");
-					player[0].deg(0);
-					printf("\n");
+					player[0].deg(0,1,1);
+					printf("\e[0m\n");
 				}
 				if(m == -1)
 				{

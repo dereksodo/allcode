@@ -1,9 +1,10 @@
 #include "robotcard.hpp"
 //用户大量模拟对抗，并计算最佳参数
-const int maxP = 40;
-const int maxRound = 20;
-int cnt = 20;
+const int maxP = 10;
+const int maxRound = 30;
+int cnt = 10;
 robot rt[maxP + 5];
+robot best;
 hand h1[maxRound + 5][10],h2[maxRound + 5][10];
 void setvis(int i,int j,int k,int fg)
 {
@@ -19,6 +20,59 @@ void setvis(int i,int j,int k,int fg)
 bool sortm(robot x,robot y)
 {
 	return x.money > y.money;
+}
+void run(int i1,int i2)
+{
+	int sum = i1 + i2;
+	for(int j = 1;j <= maxRound; ++j)
+	{
+		now.clear();
+		int winner = (rand() & 1) ? i1 : i2;
+		int lastmy = 0,my = 5;
+		for(int k = 1;k <= 9; ++k)
+		{
+			rt[i1].h = h1[j][k];
+			rt[i2].h = h2[j][k];
+			if(k > 1)
+			{
+				setvis(1,j,k - 1,1);
+				setvis(2,j,k - 1,1);
+			}
+			int last = winner;
+			while(1)
+			{
+				int m = rt[last].nxthand(my);
+				if(m >= maxMoney)
+				{
+					m = -2;
+				}
+				if(m == -1)
+				{
+					rt[last].money -= lastmy;
+					rt[sum - last].money += lastmy;
+					break;
+				}
+				else if(m == -2)
+				{
+					if(rt[sum - last].h < rt[last].h)
+					{
+						my *= -1;
+					}
+					rt[last].money -= my;
+					rt[sum - last].money += my;
+					break;
+				}
+				else
+				{
+					last = sum - last;
+					lastmy = my;
+					my = m;
+				}
+			}
+		}
+		// rt[i].money -= rt[0].money;
+		// printf("rt[%d].money = %d\n",i,rt[i].money);
+	}
 }
 int main(int argc, char const *argv[])
 {
@@ -40,6 +94,7 @@ int main(int argc, char const *argv[])
 		fscanf(file1,",%d",&rt[0].a[j]);
 	}
 	fclose(file1);
+	rt[maxP + 1] = rt[0];
 	file1 = fopen("CoE.txt","w");
 	while(cnt--)
 	{
@@ -82,57 +137,17 @@ int main(int argc, char const *argv[])
 		{
 			rt[0].money = 0;
 			rt[i].money = 0;
-			for(int j = 1;j <= maxRound; ++j)
-			{
-				now.clear();
-				int winner = (rand() & 1) ? 0 : i;
-				int lastmy = 0,my = 5;
-				for(int k = 1;k <= 9; ++k)
-				{
-					rt[0].h = h1[j][k];
-					rt[i].h = h2[j][k];
-					if(k > 1)
-					{
-						setvis(1,j,k - 1,1);
-						setvis(2,j,k - 1,1);
-					}
-					int last = winner;
-					while(1)
-					{
-						int m = rt[last].nxthand(my);
-						if(m >= maxMoney)
-						{
-							m = -2;
-						}
-						if(m == -1)
-						{
-							rt[i].money -= lastmy;
-							rt[i - last].money += lastmy;
-							break;
-						}
-						else if(m == -2)
-						{
-							if(rt[i - last].h < rt[last].h)
-							{
-								my *= -1;
-							}
-							rt[last].money -= my;
-							rt[i - last].money += my;
-							break;
-						}
-						else
-						{
-							last = i - last;
-							lastmy = my;
-							my = m;
-						}
-					}
-				}
-				// rt[i].money -= rt[0].money;
-				// printf("rt[%d].money = %d\n",i,rt[i].money);
-			}
+			run(0,i);
 		}
 		sort(rt + 1,rt + maxP + 1,sortm);
+		int lastp = rt[1].money;
+		rt[1].money = 0,rt[maxP + 1].money = 0;
+		run(1,maxP + 1);
+		if(rt[maxP + 1].money < rt[1].money)
+		{
+			rt[maxP + 1] = rt[1];
+		}
+		rt[1].money = lastp;
 		for(int i = 1;i <= maxP; ++i)
 		{
 			printf("**%d ",rt[i].money);
@@ -202,6 +217,16 @@ int main(int argc, char const *argv[])
 		fprintf(file1,"\n");
 		printf("\n");
 	}
+	fprintf(file1,"best is:");
+	for(int j = 1;j <= 5; ++j)
+	{
+		fprintf(file1,"%.6lf,",rt[maxP + 1].f[j]);
+	}
+	for(int j = 1;j <= 3; ++j)
+	{
+		fprintf(file1,"%d,",rt[maxP + 1].a[j]);
+	}
+	fprintf(file1,"\n");
 	fclose(file1);
 	return 0;
 }

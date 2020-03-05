@@ -42,22 +42,9 @@
 // \e[5m 闪烁
 // \e[7m 反显
 // \e[8m 消隐
-#include <iostream>
-#include <cstring>
-#include <cstdlib>
-#include <set>
-#include <vector>
-#include <map>
 #include <cstdio>
-#include <utility>
-#include <algorithm>
+#include <iostream>
 #include <cmath>
-#include <queue>
-#include <stack>
-#include <cassert>
-#include <climits>
-#include <numeric>
-#include <sstream>
 using namespace std;
 typedef double ld;
 typedef long long ll;
@@ -153,18 +140,6 @@ struct card{
 	}
 	void deg()
 	{
-		int dott = nxt(dot);
-		if(dott == 0)
-		{
-			printf("%d",index());
-			printf("ERROR!\n");
-			while(1);
-		}
-		if(dott <= 9)
-		{
-			printf(" ");
-		}
-		printf("%d",dott);
 		if(suit == 3)
 		{
 			printf("♠️");
@@ -181,6 +156,19 @@ struct card{
 		{
 			printf("♦️");
 		}
+		printf(" ");
+		int dott = nxt(dot);
+		if(dott == 0)
+		{
+			printf("%d",index());
+			printf("ERROR!\n");
+			while(1);
+		}
+		if(dott <= 9)
+		{
+			printf(" ");
+		}
+		printf("%d",dott);
 		if(dott > maxe)
 		{
 			printf("(king)");
@@ -337,30 +325,61 @@ struct hand{
 		pre1 = c1,pre2 = c2,pre3 = c3;
 		getpri();
 	}
-	void deg()
+	void deg(int isPrint = 0,int isRc = 0)
 	{
 		debug("p1 = %d,p2 = %d\n",pri,p2);
 		debug("c1.dot = %d\n",c1.dot);
 		c1.deg();
 		printf("  ");
-		c2.deg();
-		if(king1)
+		if(isRc)
 		{
-			printf("(king)");
+			if(king1)
+			{
+				printf("king");
+			}
+			else
+			{
+				c2.deg();
+			}
+		}
+		else
+		{
+			c2.deg();
+			if(king1)
+			{
+				printf("(king)");
+			}
 		}
 		printf("  ");
-		c3.deg();
-		if(king2)
+		if(isRc)
 		{
-			printf("(king)");
+			if(king2)
+			{
+				printf("king");
+			}
+			else
+			{
+				c3.deg();
+			}
 		}
-		printf("  ");
-		ld result = winprobe() * 100;
-		if(result < 0.1)
+		else
 		{
-			printf(" ");
+			c3.deg();
+			if(king2)
+			{
+				printf("(king)");
+			}
 		}
-		printf("win pro: %.3lf%c",result,'%');
+		if(!isPrint)
+		{
+			printf("  ");
+			ld result = winprobe() * 100;
+			if(result < 0.1)
+			{
+				printf(" ");
+			}
+			printf("win pro: %.3lf%c",result,'%');
+		}
 	}
 	bool operator <(const hand &b)const
 	{
@@ -462,9 +481,9 @@ struct robot{
 			f[3] = randme(0.0,10.0);
 			f[4] = randme(0.0,1.0);
 			f[5] = randme(0.0,1.0);
-			a[1] = randme2(1,100);
-			a[2] = randme2(1,100);
-			a[3] = randme2(1,100);
+			a[1] = randme2(1,50);
+			a[2] = randme2(1,20);
+			a[3] = randme2(1,10);
 		}
 	}
 	void setp1(ld f1,ld f2,ld f3,ld f4,ld f5,int a1,int a2,int a3,int fg = 0)
@@ -476,13 +495,13 @@ struct robot{
 		f[1] = f1,f[2] = f2,f[3] = f3,f[4] = f[4],f[5] = f5;
 		a[1] = a1,a[2] = a2,a[3] = a3;
 	}
-	void deg(int k)
+	void deg(int k,int isPrint = 0,int isRc = 0)
 	{
 		while(k--)
 		{
 			printf(" ");
 		}
-		h.deg();
+		h.deg(isPrint,isRc);
 	}
 	void input_from_sc()
 	{
@@ -495,6 +514,10 @@ struct robot{
 	}
 	int nxthand(int other)//-1:desert  -2:open  >0:keep going
 	{
+		if(check(f[5] / 1.5))
+		{
+			return -2;
+		}
 		ld pro = h.winprobe();
 		ld maxmoney = maxamount(pro);
 		int res = ceil(maxmoney);//anthing you want
@@ -512,10 +535,10 @@ struct robot{
 		}
 		else if(ld(res) * f[1] > ld(other))
 		{
-			if(check(f[5]))
-			{
-				return other + getrnd(1) * 5;
-			}
+			// if(check(f[5]))
+			// {
+			// 	return other + getrnd(3) * 5;
+			// }
 			return -2;
 		}
 		else
@@ -589,7 +612,7 @@ void setvis(int k,int fg)
 {
 	now.vis[player[k].h.pre1.index()] = now.vis[player[k].h.pre2.index()] = now.vis[player[k].h.pre3.index()] = fg;
 }
-void showcards(int fg = 0)
+void showcards(int fg = 0,int nxtfg = 0)
 {
 	printf(">>>Info:\n");
 	if(!fg)
@@ -603,8 +626,15 @@ void showcards(int fg = 0)
 	{
 		printf("   you:");
 	}
-	player[1].deg(3);
-	printf("    amount:%.2lf\n\n",maxamount(player[1].h.winprobe()));
+	player[1].deg(3,1,1);
+	if(!nxtfg)
+	{
+		printf("    amount:%.2lf\n\n",maxamount(player[1].h.winprobe()));
+	}
+	else
+	{
+		printf("\n");
+	}
 }
 void showresult(int fg,int winner = 0,int m = 0,int k = 0)
 {
