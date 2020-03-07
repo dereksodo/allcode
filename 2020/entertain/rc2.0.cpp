@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
 	while(1)
 	{
 		now.clear();
-		player[0].setp1(4.713712,4.327479,4.323815,0.476375,0.519601,10,5,2,-1);
+		player[0].setp1(8.176648,4.778467,6.318363,0.751499,0.048878,49,10,6,-1);
 		// player[1].setp();
 		int winner = rand() & 1;
 		showresult(0);
@@ -170,7 +170,7 @@ int main(int argc, char const *argv[])
 		}
 		printf("\e[01;34mGame ends\e[0m\n");
 		printf("\e[01;35mplayer %d:%d\nplayer %d:%d\e[0m\n",1,player[0].money,2,player[1].money);
-		// getchar();
+		getchar();
 	}
 	return 0;
 }

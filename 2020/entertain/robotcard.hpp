@@ -514,10 +514,6 @@ struct robot{
 	}
 	int nxthand(int other)//-1:desert  -2:open  >0:keep going
 	{
-		if(check(f[5] / 1.5))
-		{
-			return -2;
-		}
 		ld pro = h.winprobe();
 		ld maxmoney = maxamount(pro);
 		int res = ceil(maxmoney);//anthing you want
