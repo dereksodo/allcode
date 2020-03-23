@@ -16,8 +16,8 @@ cp ../../temp.cpp A.cpp
 cp ../../temp.cpp B.cpp
 cp ../../temp.cpp C.cpp
 cp ../../temp.cpp D.cpp
-g++-7 A.cpp -o A
-g++-7 B.cpp -o B
-g++-7 C.cpp -o C
-g++-7 D.cpp -o D
+g++ A.cpp -o A
+g++ B.cpp -o B
+g++ C.cpp -o C
+g++ D.cpp -o D
 # fi
